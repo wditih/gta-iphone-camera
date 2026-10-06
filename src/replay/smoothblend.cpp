@@ -20,6 +20,7 @@
 #include "replay/shake.h"
 #include "capture/render.h"
 #include "capture/dofsession.h"
+#include "phone/phonecamera.h"
 
 using spline::Vec3;
 
@@ -1710,6 +1711,7 @@ namespace smoothblend
 		__try
 		{
 			applySpline(self);
+			const bool phonePose = phonecamera::apply(self);
 
 			// Before the shake, so what the editor saves is the curve's pose
 			// rather than the curve plus this frame's random lean.
@@ -1721,7 +1723,7 @@ namespace smoothblend
 			void* marker = storage
 				? rstorage::tryGetMarker(storage, rdirector::currentMarkerIndex(self))
 				: nullptr;
-			applyShake(self, marker);
+			if (!phonePose) applyShake(self, marker);
 
 			// LAST, deliberately. The aperture offset has to survive everything
 			// above it, and it is not part of the shot: the spline and the shake

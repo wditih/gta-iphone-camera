@@ -10,6 +10,7 @@
 #include "capture/render.h"
 #include "capture/exporthook.h"
 #include "lights/lights.h"
+#include "phone/phonecamera.h"
 
 static bool bInited = false;
 static void (*origGetSystemTimeAsFileTime)(LPFILETIME) = nullptr;
@@ -38,6 +39,7 @@ static void InstallResolved()
 	// After exporthook, which owns what the Export button DOES; this owns the
 	// rows on the screen that configure it.
 	exportmenu::install();
+	phonecamera::install();
 }
 
 static bool InstallAll()

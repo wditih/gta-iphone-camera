@@ -1,3 +1,14 @@
+# GTA iPhone Camera — experimental fork
+
+Phone camera prototype for **GTA V Legacy Story Mode**. Start with the
+[Russian installation and 10-second acceptance test](PHONE_CAMERA_RU.md).
+Requires an existing ASI loader and a compatible BlendMotion iOS app.
+No in-game/iPhone/stock-export acceptance has been performed yet.
+
+This fork adds phone tracking, an independent preview bridge, and timed camera
+sidecars to CoreFX's GPL-3.0 Rockstar Editor+. The original project documentation
+below describes its broader capabilities; the new phone feature targets Legacy only.
+
 # Rockstar Editor+
 
 Camera and rendering mod for GTA V's Rockstar Editor. Legacy (`GTA5.exe`) and

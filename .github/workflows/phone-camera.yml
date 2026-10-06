@@ -1,0 +1,43 @@
+name: Phone camera prototype
+on:
+  push:
+    branches: ["codex/iphone-rockstar-camera"]
+  pull_request:
+    paths:
+      - "src/**"
+      - "bridge/**"
+      - "tests/**"
+      - "tools/package_phone.py"
+      - "CMakeLists.txt"
+      - ".github/workflows/phone-camera.yml"
+      - "PHONE_CAMERA_RU.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install bridge build dependencies
+        run: python -m pip install -r bridge/requirements.txt
+      - name: Configure MSVC x64
+        run: cmake -S . -B build -A x64
+      - name: Compile ASI and camera tests
+        run: cmake --build build --config Release --target RockstarEditorPlus phonecore_test --parallel 2
+      - name: Test camera math and persistence
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Test app protocol and real socket preview
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Build standalone Windows bridge
+        run: python -m PyInstaller --clean --noconfirm --onefile --name PhoneCameraBridge --paths bridge --distpath build/bridge --workpath build/pyinstaller bridge/phone_bridge.py
+      - name: Package prototype and matching GPL source
+        run: python tools/package_phone.py --build build --output build/packages
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GTA-iPhone-Camera-prototype
+          path: build/packages/*
+          retention-days: 30
