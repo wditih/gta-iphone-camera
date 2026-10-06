@@ -82,3 +82,15 @@ tunnel to a DNS-verified GitHub API address preserves normal TLS verification.
 CI must compile the full ASI with MSVC. Friend must run the documented short
 clip, reload and stock export, report game/iOS/app versions and compare camera
 poses. No official mod release or game compatibility claim before that evidence.
+
+## Final refinement and build evidence
+
+- First Windows MSVC CI run 37539993433 completed successfully: full ASI,
+  core tests, socket tests, frozen bridge and source-bearing package.
+- Added world-axis rotation calibration regression for a rolled phone,
+  preserving physical yaw, and stable heading when a camera points vertically.
+  Portable C++ test now passes 28 checks.
+- Locally frozen Bridge.exe passed actual UDP forwarding and WebSocket JPEG
+  decoding with a simulated phone in --demo mode, without screen capture.
+- The friend checklist covers named project persistence, loader recovery,
+  track warmup, tracking loss and comparison with stock export.

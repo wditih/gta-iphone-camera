@@ -32,6 +32,15 @@ int main() {
         start.rotation=rquat::fromAxisAngle(0,0,1,1.570796327f);
         ref.set(p,start); p.position.y+=1;
         require(near(ref.evaluate(p,1).position.x,99),"heading-aligned walk");
+        const auto turn=rquat::fromAxisAngle(0,0,1,0.5f);
+        Pose tilted{{0,0,0},rquat::fromAxisAngle(0,1,0,1.2f),50};
+        Pose gameBase{{0,0,3},rquat::fromAxisAngle(1,0,0,0.4f),55};
+        ref.set(tilted,gameBase);
+        require(std::fabs(ref.evaluate(tilted,1).rotation.dot(gameBase.rotation))>0.9999f,"tilted calibration has no rotation jump");
+        tilted.rotation=turn*tilted.rotation;
+        const auto turned=ref.evaluate(tilted,1);
+        require(std::fabs(turned.rotation.dot(turn*gameBase.rotation))>0.9999f,"physical world yaw remains yaw for rolled phone");
+        require(near(yaw(rquat::fromAxisAngle(1,0,0,1.570796327f)),0),"vertical camera heading stays finite and stable");
         Track t;
         Pose a{{0,0,3},{},45}; Pose b{{10,0,3},rquat::fromAxisAngle(0,0,1,1.0f),70};
         require(t.append(100,a)&&t.append(1100,b),"record samples");

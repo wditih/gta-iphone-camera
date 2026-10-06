@@ -44,7 +44,11 @@ inline Vec3 rotate(Quat q, Vec3 v) {
     return Vec3(a)*v.x+Vec3(b)*v.y+Vec3(c)*v.z;
 }
 inline float yaw(Quat q) {
-    const auto f=rotate(q,{0,1,0}); return std::atan2(-f.x,f.y);
+    const auto f=rotate(q,{0,1,0});
+    if (f.x*f.x+f.y*f.y<1e-6f) {
+        const auto r=rotate(q,{1,0,0}); return std::atan2(r.y,r.x);
+    }
+    return std::atan2(-f.x,f.y);
 }
 struct Calibration {
     Pose phone, game;
@@ -55,7 +59,11 @@ struct Calibration {
         const Vec3 delta=(p.position-phone.position)*scale;
         out.position=game.position+Vec3{std::cos(h)*delta.x-std::sin(h)*delta.y,
             std::sin(h)*delta.x+std::cos(h)*delta.y,delta.z};
-        out.rotation=(game.rotation*phone.rotation.conjugate()*p.rotation).normalized();
+        const auto alignment=rquat::fromAxisAngle(0,0,1,h);
+        // Physical yaw stays around world up even when the phone was rolled or
+        // tilted at calibration. A local delta would swap those motion axes.
+        out.rotation=(alignment*p.rotation*phone.rotation.conjugate()*
+            alignment.conjugate()*game.rotation).normalized();
         return out;
     }
 };

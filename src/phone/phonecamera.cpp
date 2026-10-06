@@ -117,7 +117,9 @@ bool readFrame(void* self,Pose& p) {
     const Vec3 forward((float*)(b+rdirector::OFF_FrameMatrixB));
     const Vec3 up((float*)(b+rdirector::OFF_FrameMatrixC));
     if (!finite(right)||!finite(forward)||!finite(up) || std::fabs(right.lengthSq()-1)>0.02f ||
-        std::fabs(forward.lengthSq()-1)>0.02f || std::fabs(up.lengthSq()-1)>0.02f) return false;
+        std::fabs(forward.lengthSq()-1)>0.02f || std::fabs(up.lengthSq()-1)>0.02f ||
+        std::fabs(dot(right,forward))>0.02f || std::fabs(dot(right,up))>0.02f ||
+        std::fabs(dot(forward,up))>0.02f || dot(cross(right,forward),up)<0.98f) return false;
     p={Vec3((float*)(b+rdirector::OFF_FramePosition)),rquat::fromBasis(right,forward,up),
         *(float*)(b+rdirector::OFF_FrameFov)};
     return valid(p);
